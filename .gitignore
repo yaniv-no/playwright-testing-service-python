@@ -27,3 +27,10 @@ pip-delete-this-directory.txt
 # VS Code settings
 
 .python_packages
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

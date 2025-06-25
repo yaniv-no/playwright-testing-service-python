@@ -1,10 +1,17 @@
 # GitHub Actions workflow to deploy to Azure Functions and run Playwright tests
 name: Deploy and Test Azure Function
 
+
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions: # Required when using Microsoft Entra ID to authenticate
+  id-token: write
+  contents: read
+
 
 jobs:
   build-and-deploy:
@@ -16,12 +23,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          
       - name: Install dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
+      - name: Login to Azure with AzPowershell (enableAzPSSession true)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }} # GitHub Open ID connect values copied in previous steps
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
       - name: Azure Functions Action
         uses: Azure/functions-action@v1
+        id: fa
         with:
           app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           package: .
@@ -32,16 +51,35 @@ jobs:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
     environment: testing
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - name: Install dependencies
-        run: npm ci
-      - name: Install playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run tests
-        run: npx playwright test
 
-          service-connection: ${{ secrets.AZURE_PLAYWRIGHT_SERVICE_CONNECTION }}
-          test-folder: tests
-          app-url: ${{ secrets.AZURE_FUNCTIONAPP_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+
+      - name: Login to Azure with AzPowershell (enableAzPSSession true)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }} # GitHub Open ID connect values copied in previous steps
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Install dependencies
+        working-directory: tests
+        run: npm ci
+
+      - name: Run Playwright tests
+        working-directory: tests
+        env:
+          # Regional endpoint for Microsoft Playwright Testing
+          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
+          AZURE_FUNCTIONAPP_URL: ${{ secrets.AZURE_FUNCTIONAPP_URL }}
+        run: npx playwright test -c playwright.service.config.ts --workers=20
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: tests/playwright-report/ 
+          retention-days: 10

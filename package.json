@@ -1,0 +1,28 @@
+{
+  "name": "playwright-testing-service-python",
+  "version": "1.0.0",
+  "description": "This project is a simple Python web application using Flask, served via Azure Functions. It displays an HTML page with two buttons. The project includes GitHub Actions workflows for deployment and Playwright-based testing using Azure Playwright Testing Service.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaniv-no/playwright-testing-service-python.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yaniv-no/playwright-testing-service-python/issues"
+  },
+  "homepage": "https://github.com/yaniv-no/playwright-testing-service-python#readme",
+  "devDependencies": {
+    "@azure/microsoft-playwright-testing": "^1.0.0-beta.7",
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^24.0.4",
+    "dotenv": "^16.5.0"
+  }
+}

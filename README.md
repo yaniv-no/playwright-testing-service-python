@@ -31,3 +31,9 @@ python3 app.py
 ## Notes
 - The Playwright test is a placeholder. Update the URL and selectors as needed.
 - The workflow expects your Azure resources and secrets to be set up in advance.
+
+```
+
+# Setup User Managed Identity with Github Actions
+
+https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity?pivots=identity-wif-mi-methods-azp
