@@ -47,13 +47,13 @@ jobs:
 
   playwright-test:
     needs: build-and-deploy
-    name: Run end-to-end tests
+    name: Run Azure Playwright service tests
     runs-on: ubuntu-latest
     environment: testing
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
 
       - name: Login to Azure with AzPowershell (enableAzPSSession true)
         uses: azure/login@v2
