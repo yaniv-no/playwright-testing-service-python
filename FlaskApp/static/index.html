@@ -1,11 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flask on Azure Function</title>
+  <meta charset="UTF-8">
+  <title>Playwright TodoMVC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/todomvc-app-css@2.4.2/index.css">
+  <style>
+    .completed label { text-decoration: line-through; color: #d9d9d9; }
+    .selected { font-weight: bold; }
+  </style>
 </head>
 <body>
-    <h1>Welcome to Flask on Azure Function!</h1>
-    <button onclick="alert('Button 1 clicked!')">Button 1</button>
-    <button onclick="alert('Button 2 clicked!')">Button 2</button>
+  <section class="todoapp">
+    <header class="header">
+      <h1>todos</h1>
+      <input class="new-todo" placeholder="What needs to be done?" autofocus data-testid="new-todo" />
+    </header>
+    <section class="main" style="display:none;">
+      <input id="toggle-all" class="toggle-all" type="checkbox" data-testid="toggle-all" aria-label="Mark all as complete">
+      <ul class="todo-list" data-testid="todo-list"></ul>
+    </section>
+    <footer class="footer" style="display:none;">
+      <span class="todo-count" data-testid="todo-count"></span>
+      <ul class="filters">
+        <li><a href="#/" class="selected" data-testid="filter-all">All</a></li>
+        <li><a href="#/active" data-testid="filter-active">Active</a></li>
+        <li><a href="#/completed" data-testid="filter-completed">Completed</a></li>
+      </ul>
+      <button class="clear-completed" style="display:none;" data-testid="clear-completed">Clear completed</button>
+    </footer>
+  </section>
+  <script src="/static/todo-app.js"></script>
 </body>
 </html>
