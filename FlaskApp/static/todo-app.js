@@ -18,6 +18,72 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('react-todos', JSON.stringify(todos));
   }
 
+  // Toggle all functionality
+  toggleAll.addEventListener('change', () => {
+    const checked = toggleAll.checked;
+    todos.forEach(t => t.completed = checked);
+    saveTodos();
+    render();
+  });
+
+  // Editing functionality
+  function startEditing(li, idx) {
+    li.classList.add('editing');
+    const todo = todos[idx];
+    const input = document.createElement('input');
+    input.className = 'edit';
+    input.value = todo.title;
+    input.setAttribute('aria-label', 'Edit');
+    li.querySelector('.view').style.display = 'none';
+    li.appendChild(input);
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+
+    function finishEdit(save) {
+      let val = input.value.trim();
+      if (save && val) {
+        todo.title = val;
+        saveTodos();
+      } else if (save && !val) {
+        // Remove the todo from the main todos array, not just filtered
+        const todoIdx = todos.indexOf(todo);
+        if (todoIdx !== -1) {
+          todos.splice(todoIdx, 1);
+          saveTodos();
+        }
+      } else if (!save) {
+        // Cancel: restore original value
+      }
+      li.classList.remove('editing');
+      input.remove();
+      li.querySelector('.view').style.display = '';
+      render();
+    }
+
+    let originalValue = input.value;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') finishEdit(true);
+      if (e.key === 'Escape') {
+        input.value = originalValue;
+        finishEdit(false);
+      }
+    });
+    input.addEventListener('blur', () => finishEdit(true));
+  }
+
+  // Routing (hashchange)
+  function updateFilterFromHash() {
+    const hash = location.hash.replace('#/', '');
+    if (['', 'active', 'completed'].includes(hash)) {
+      filter = hash || 'all';
+      render();
+    }
+  }
+  window.addEventListener('hashchange', updateFilterFromHash);
+  // Ensure correct filter on initial load
+  updateFilterFromHash();
+
+  // Update render to support editing and double-click
   function render() {
     // Filter todos
     let filteredTodos = todos;
@@ -48,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const label = document.createElement('label');
       label.textContent = todo.title;
       label.setAttribute('data-testid', 'todo-title');
+      label.addEventListener('dblclick', () => startEditing(li, todos.indexOf(todo)));
       div.appendChild(label);
 
       li.appendChild(div);
@@ -89,10 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
     f.addEventListener('click', (e) => {
       e.preventDefault();
       const href = f.getAttribute('href');
-      if (href === '#/') filter = 'all';
-      if (href === '#/active') filter = 'active';
-      if (href === '#/completed') filter = 'completed';
-      render();
+      if (href) {
+        location.hash = href;
+      }
     });
   });
 

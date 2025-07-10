@@ -6,7 +6,7 @@ import config from './playwright.config';
 export default defineConfig(
   config,
   getServiceConfig(config, {
-    exposeNetwork: '<loopback>',
+    exposeNetwork: '<loopback>', // Use '<loopback>' to expose the loopback interface, or specify a custom network interface
     timeout: 30000,
     os: ServiceOS.LINUX,
     useCloudHostedBrowsers: true // Set to false if you want to only use reporting and not cloud hosted browsers

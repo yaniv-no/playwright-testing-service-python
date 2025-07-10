@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(process.env.AZURE_FUNCTIONAPP_URL || 'http://localhost:3000');
+  await page.goto(process.env.AZURE_FUNCTIONAPP_URL || 'http://127.0.0.1:5000');
 });
 
 const TODO_ITEMS = [
