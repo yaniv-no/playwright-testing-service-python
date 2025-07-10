@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const completedCount = todos.filter(t => t.completed).length;
     clearCompleted.style.display = completedCount ? '' : 'none';
 
+    
     // Highlight filter
     filters.forEach(f => f.classList.remove('selected'));
     document.querySelector(`[data-testid="filter-${filter}"]`).classList.add('selected');
